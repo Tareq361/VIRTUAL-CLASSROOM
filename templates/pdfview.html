@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous"
+    />
+    
+    <script src="//mozilla.github.io/pdf.js/build/pdf.js" crossorigin="anonymous"></script>
+
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js" crossorigin="anonymous"></script>
+    <link href="https://mozilla.github.io/pdf.js/web/viewer.css" rel="stylesheet" type="text/css" />
+    
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style type="text/css">
+#the-canvas {
+  border: 5px solid black;
+  direction: ltr;
+
+}
+.div4 {
+    margin: auto;
+    margin-top: -793px;;
+  width: 400px;
+  height: 700px;
+  margin-right: 40px;
+  border-radius:10px;
+background: #fff;
+  border: 1px solid white;
+  box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+
+  overflow: scroll;
+}
+canvas {
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 800px;
+
+  border: 1px solid white;
+  box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+
+}
+.top-bar {
+  position: relative;
+
+background: fixed;
+ {% if request.session.student_id %}
+margin-left:20rem;
+{% endif %}
+  text-align: center;
+
+}
+.btn1{
+  width: 30px;
+  height: 30px;
+  border: 1px solid #cc8a11;
+  border-radius: 50%;cursor: pointer;
+}
+#prev-page{
+
+}
+#next{
+  margin-left: 1rem;
+}
+.btn {
+  background: coral;
+  color: #fff;
+  border: none;
+  outline: none;
+ 
+  padding: 0.7rem 2rem;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.page-info {
+  margin-left: 1rem;
+}
+span{
+  color: coral;
+  background: #fff;
+}
+#show h6{
+  margin-top:-45px;
+  margin-left:2.8rem;
+}
+#show p{
+  margin-top:-1px;
+  margin-left:2.9rem;
+  font-size:13px;
+}
+#tshow p{
+  margin-top:-50px;
+  margin-left:3.9rem;
+  font-size:12px;
+}
+.error {
+  background: orangered;
+  color: #fff;
+  padding: 1rem;
+}
+#pdf-render{
+
+  height:fit-content;
+  width: fit-content;
+}
+body{
+  background: white;
+
+}
+.hide { display: none; }
+</style>
+
+
+    <title>{{material.file}}</title>
+  </head>
+  <body>
+    <div class="top-bar">
+
+      <button class="btn" id="prev">
+        <i class="fas fa-arrow-circle-left"></i> Prev Page
+      </button>
+       &nbsp; &nbsp;
+      <span class="page-info">
+        Page <span id="page_num"></span> of <span id="page_count"></span>
+      </span>
+      <button class="btn" id="next">
+        Next Page <i class="fas fa-arrow-circle-right"></i>
+      </button>
+              <button class="btn1"id="zoominbutton"  type="button">
+        <i class="fas fa-search-plus" aria-hidden="true"></i>
+      </button>
+             <button class="btn1"id="zoomoutbutton" type="button">
+        <i class="fas fa-search-minus" aria-hidden="true"></i>
+      </button>
+              <button class="btn1"id="zoomrestore" type="button">
+        <i class="fas fa-recycle"></i>
+      </button>
+      &nbsp; &nbsp;
+      {% if request.session.student_id %}
+      <div class="w3-dropdown-hover" style="">
+        <button class="w3-button w3-green">Add question</button>
+        <div class="w3-dropdown-content w3-bar-block w3-border">
+          <a href="#"  type="button" onclick="document.getElementById('id01').style.display='block'" id="textQuestion" href="" class="w3-bar-item w3-button">Wrriten</a>
+          <a  href="#" onclick="document.getElementById('id02').style.display='block'" id="audioQuestion"class="w3-bar-item w3-button">Audio</a>
+          <a href="" class="w3-bar-item w3-button">Link 3</a>
+        </div>
+      </div>
+      <div class="w3-container">
+        
+      
+        <div id="id01" class="w3-modal">
+          <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+      
+            <div class="w3-center"><br>
+              <span onclick="document.getElementById('id01').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+      
+            </div>
+      
+            <form class="w3-container" method="POST"{{classMaterial.get_absolute_url}}">
+              {% csrf_token %}
+              <div class="w3-section">
+                <label><b>Write your Question:</b></label>
+                <input class="w3-input w3-border w3-margin-bottom" type="text"  name="question" required>
+                <input type="hidden" id="pageno" name="pageno" value="0">
+                <input type="hidden" id="width" name="width" value="0">
+                <input type="hidden" id="top" name="top" value="0">
+                <input type="hidden" id="left" name="left" value="0">
+                <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">submit</button>
+               
+              </div>
+            </form>
+      
+            <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+              <button onclick="document.getElementById('id01').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>
+      
+            </div>
+      
+          </div>
+        </div>
+                <div id="id02" class="w3-modal">
+          <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+
+            <div class="w3-center"><br>
+              <span onclick="document.getElementById('id02').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+
+            </div>
+    <div id="controls">
+  	 <button id="recordButton" class="w3-button w3-green">Record</button>
+  	 <button id="pauseButton"class="w3-button  w3-primary" disabled>Pause</button>
+  	 <button id="stopButton" class="w3-button w3-red" disabled>Stop</button>
+
+    </div>
+    <div id="formats">Format: start recording to see sample rate</div>
+  	<p><strong>Recordings:</strong></p>
+  	<ol id="recordingsList">{% csrf_token %}</ol>
+
+
+            <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+              <button onclick="document.getElementById('id02').style.display='none'" type="button" class="w3-button w3-red">Cancel</button>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <canvas id="pdf-render"style="" value=""></canvas>
+    
+    <div class="textLayer" id="text"></div>
+    <div  id="text1"></div>
+    {% if request.session.teacher_id %}
+    <div class="div4" id="question">
+      <h3>Question:</h3>
+     
+      <div class="subject" id="show">
+
+        
+      </div> 
+     
+      </div>
+      {% endif %}
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+    
+    <script>
+ 
+       
+      var url = '{{material.file.url}}';
+    var PageNo;
+    var AudioQ;
+    var pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+// The workerSrc property shall be specified.
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.js';
+let pdfDoc = null,
+  pageNum = {{request.session.pageno}}, //get page no from view
+  pageRendering = false,
+  pageNumPending = null;
+  var ques=document.querySelector('#question')
+var scale = 1.0,
+  canvas = document.querySelector('#pdf-render'),
+  ctx = canvas.getContext('2d');
+
+// Render the page
+function renderPage(num) {
+  pageRendering = true;
+  // Using promise to fetch the page
+  pdfDoc.getPage(num).then(function(page) {
+    var viewport = page.getViewport({scale: scale});
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+{% if request.session.teacher_id %} //if it is teacher account
+    {% for data in data%}  //get data from data
+
+    if('{{data.page_no}}'==num){ //if page no=question pageno then show the question in the page
+ //for marked question
+ var myElm = document.createElement("div");
+ myElm.setAttribute("class", "Ques{{data.id}}");
+myElm.style.position = "absolute";
+myElm.style.left ='{{data.left}}'+'px';
+myElm.style.border="1px solid #000000";
+myElm.style.top = '{{data.top}}'+'px';
+myElm.style.height='10px';
+myElm.style.width='{{data.width}}'+'px';
+myElm.style.background="green";
+myElm.style.color="green";
+myElm.style.opacity="0.3";
+myElm.style.marginTop="2px";
+myElm.style.cursor="pointer";
+
+
+ 
+  var myElm3 = document.createElement("p");
+  myElm3.innerHTML="{{data.question}}";
+  myElm3.setAttribute("class","hide div{{data.id}}");
+document.body.appendChild(myElm);
+
+var myElm2 = document.createElement("div");
+//myElm2.setAttribute("class","hide innerText");
+
+//var elem = document.querySelector(".Ques");
+//console.log(elem);
+document.body.appendChild(myElm2);
+
+document.body.appendChild(myElm3);
+var count=0;
+{% if request.session.teacher_id %}
+function displayTxt() {
+  console.log("got it");
+  if(count==0){
+    document.querySelector( '.div{{data.id}}' ).classList.remove( 'hide' );
+    count=count+1;
+  }
+  else{
+    document.querySelector( '.div{{data.id}}' ).classList.add( 'hide' );
+    count=0;
+  }
+  }
+// if leave -> hide txt
+
+
+/* mouseover and mouseout events to `.wrapper` element */
+var $wrapper = document.querySelector(".Ques{{data.id}}");
+console.log($wrapper);
+$wrapper.addEventListener('click',displayTxt);
+{% endif %}
+ //for marked question
+ //for name
+    var btn = document.createElement("h6");   // Create a <button> element
+btn.innerHTML = '{{data.student_id.Fname}} {{data.student_id.Lname}}';
+btn.id="pshow";
+btn.style.fontWeight="600";
+//for question
+{% if data.AudioQuestion %}
+var au = document.createElement('audio');
+au.controls = true;
+au.src = '{{data.AudioQuestion.url}}';
+au.style.marginLeft="30px";
+au.id="ashow";
+AudioQ=true;
+{% else %}
+var q = document.createElement("p");   // Create a <button> element
+q.innerHTML = '{{data.question}}';
+q.id="qshow";
+q.style.fontWeight="900";
+{%endif%}
+//for img          // Insert text
+var i = document.createElement("img");   // Create a <button> element
+i.src = '{{data.student_id.image.url}}';
+i.id="ishow";
+i.style.width="40px"
+i.style.height="40px"
+i.className="w3-circle";
+//for time
+var t = document.createElement("p");   // Create a <button> element
+t.id="tshow";
+t.innerHTML='{{data.time}}';
+t.style.marginTop="-10px";
+t.style.fontSize="10px";
+t.style.fontWeight="5";
+//for input
+//var x = document.createElement("INPUT");
+//x.id="input"
+//x.setAttribute("type", "text");
+//create button
+//var b = document.createElement("BUTTON");
+//b.setAttribute("type","submit");
+/////b.innerHTML="Submit";
+//b.className="w3-green";
+//b.id="button";
+var h = document.createElement("HR");
+if(AudioQ){
+document.getElementById("show").appendChild(i);
+document.getElementById("show").appendChild(btn);
+document.getElementById("show").appendChild(t);
+document.getElementById("show").appendChild(au);
+document.getElementById("show").appendChild(h);
+AudioQ=false;
+}
+else{
+document.getElementById("show").appendChild(i);
+document.getElementById("show").appendChild(btn);
+document.getElementById("show").appendChild(t);
+document.getElementById("show").appendChild(q);
+document.getElementById("show").appendChild(h);
+}
+//document.getElementById("show").appendChild(x);
+//document.getElementById("show").appendChild(b);
+}
+else{
+
+}
+
+{% endfor %}
+{%endif%}
+    // Render PDF page into canvas context
+    var renderContext = {
+      canvasContext: ctx,
+      viewport: viewport
+    };
+    var renderTask = page.render(renderContext);
+
+    // Wait for rendering to finish
+    renderTask.promise.then(function() {
+      pageRendering = false;
+      if (pageNumPending !== null) {
+        // New page rendering is pending
+        renderPage(pageNumPending);
+        pageNumPending = null;
+      }
+    }).then(function() {
+      // Returns a promise, on resolving it will return text contents of the page
+      return page.getTextContent();
+    }).then(function(textContent) {
+
+
+     
+        
+      // Assign CSS to the textLayer element
+      var textLayer = document.querySelector(".textLayer");
+
+      textLayer.style.left = canvas.offsetLeft + 'px';
+      textLayer.style.top = canvas.offsetTop + 'px';
+      textLayer.style.height = canvas.offsetHeight + 'px';
+      textLayer.style.width = canvas.offsetWidth + 'px';
+
+      // Pass the data to the method for rendering of text over the pdf canvas.
+      pdfjsLib.renderTextLayer({
+        textContent: textContent,
+        container: textLayer,
+        viewport: viewport,
+        textDivs: []
+      });
+    });
+  });//end of getPage
+
+  // Update page counters
+  document.getElementById('page_num').textContent = num;
+  document.querySelector('#pageno').value=num;
+  PageNo=num;
+
+}//end of renderpage
+
+/**
+ * If another page rendering in progress, waits until the rendering is
+ * finised. Otherwise, executes rendering immediately.
+ */
+function queueRenderPage(num) {
+  if (pageRendering) {
+    pageNumPending = num;
+  } else {
+    renderPage(num);
+  }
+}
+
+/**
+ * Displays previous page.
+ */
+function onPrevPage() {
+  if (pageNum <= 1) {
+    return;
+  }
+  pageNum--;
+  queueRenderPage(pageNum);
+}
+document.getElementById('prev').addEventListener('click', onPrevPage);
+
+/**
+ * Displays next page.
+ */
+function onNextPage() {
+  if (pageNum >= pdfDoc.numPages) {
+    return;
+  }
+  pageNum++;
+  queueRenderPage(pageNum);
+}
+document.getElementById('next').addEventListener('click', onNextPage);
+function myFunction() {
+        if (window.getSelection) {
+                var selectedText = window.getSelection().toString();
+                    console.log(selectedText);
+
+                    s = window.getSelection();
+oRange = s.getRangeAt(0); //get the text range
+var rect = oRange.getBoundingClientRect();
+                   // var rect = window.getSelection().getBoundingClientRect();
+//console.log(rect.top,rect.left);
+var width=rect.right - rect.left;
+var top=rect.top;
+var left = rect.left;
+                     //get the imformation for send the question
+                    document.querySelector('#width').value=width;
+                    document.querySelector('#left').value=left;
+                    document.querySelector('#top').value=top;
+                    //get the data
+
+
+                }
+        
+}
+{% if request.session.student_id %}
+document.getElementById('textQuestion').addEventListener('click', myFunction);
+document.getElementById('audioQuestion').addEventListener('click', myFunction);
+{% endif %}
+
+
+/**
+ * Asynchronously downloads PDF.
+ */
+pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
+  pdfDoc = pdfDoc_;
+ document.getElementById('page_count').textContent = pdfDoc.numPages;
+
+  // Initial/first page rendering
+  renderPage(pageNum);
+});
+  var zoominbutton = document.getElementById("zoominbutton");
+         zoominbutton.onclick = function() {
+            scale = scale + 0.25;
+            renderPage(pageNum);
+         }
+
+         var zoomoutbutton = document.getElementById("zoomoutbutton");
+         zoomoutbutton.onclick = function() {
+            if (scale <= 0.25) {
+               return;
+            }
+            scale = scale - 0.25;
+            renderPage(pageNum);
+         }
+         var zoomrestore = document.getElementById("zoomrestore");
+         zoomrestore.onclick = function() {
+
+          scale = 1.0;
+          renderPage(pageNum);
+       }
+// Button Events
+
+function removeChildren (params){
+    var parentId = params.parentId;
+    var childName = params.childName;
+
+    var childNodes = document.getElementById(parentId).childNodes;
+    for(var i=childNodes.length-1;i >= 0;i--){
+        var childNode = childNodes[i];
+        console.log("ok");
+     
+            childNode.parentNode.removeChild(childNode);
+        
+    }
+}
+
+//webkitURL is deprecated but nevertheless
+URL = window.URL || window.webkitURL;
+
+var gumStream; 						//stream from getUserMedia()
+var rec; 							//Recorder.js object
+var input; 							//MediaStreamAudioSourceNode we'll be recording
+
+// shim for AudioContext when it's not avb.
+var AudioContext = window.AudioContext || window.webkitAudioContext;
+var audioContext //audio context to help us record
+
+var recordButton = document.getElementById("recordButton");
+var stopButton = document.getElementById("stopButton");
+var pauseButton = document.getElementById("pauseButton");
+
+//add events to those 2 buttons
+recordButton.addEventListener("click", startRecording);
+stopButton.addEventListener("click", stopRecording);
+pauseButton.addEventListener("click", pauseRecording);
+
+function startRecording() {
+	console.log("recordButton clicked");
+
+	/*
+		Simple constraints object, for more advanced audio features see
+		https://addpipe.com/blog/audio-constraints-getusermedia/
+	*/
+
+    var constraints = { audio: true, video:false }
+
+ 	/*
+    	Disable the record button until we get a success or fail from getUserMedia()
+	*/
+
+	recordButton.disabled = true;
+	stopButton.disabled = false;
+	pauseButton.disabled = false
+
+	/*
+    	We're using the standard promise based getUserMedia()
+    	https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+	*/
+
+	navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+		console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
+
+		/*
+			create an audio context after getUserMedia is called
+			sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
+			the sampleRate defaults to the one set in your OS for your playback device
+
+		*/
+		audioContext = new AudioContext();
+
+		//update the format
+		document.getElementById("formats").innerHTML="Format: 1 channel pcm @ "+audioContext.sampleRate/1000+"kHz"
+
+		/*  assign to gumStream for later use  */
+		gumStream = stream;
+
+		/* use the stream */
+		input = audioContext.createMediaStreamSource(stream);
+
+		/*
+			Create the Recorder object and configure to record mono sound (1 channel)
+			Recording 2 channels  will double the file size
+		*/
+		rec = new Recorder(input,{numChannels:1})
+
+		//start the recording process
+		rec.record()
+
+		console.log("Recording started");
+
+	}).catch(function(err) {
+	  	//enable the record button if getUserMedia() fails
+    	recordButton.disabled = false;
+    	stopButton.disabled = true;
+    	pauseButton.disabled = true
+	});
+}
+
+function pauseRecording(){
+	console.log("pauseButton clicked rec.recording=",rec.recording );
+	if (rec.recording){
+		//pause
+		rec.stop();
+		pauseButton.innerHTML="Resume";
+	}else{
+		//resume
+		rec.record()
+		pauseButton.innerHTML="Pause";
+
+	}
+}
+
+function stopRecording() {
+	console.log("stopButton clicked");
+
+	//disable the stop button, enable the record too allow for new recordings
+	stopButton.disabled = true;
+	recordButton.disabled = false;
+	pauseButton.disabled = true;
+
+	//reset button just in case the recording is stopped while paused
+	pauseButton.innerHTML="Pause";
+
+	//tell the recorder to stop the recording
+	rec.stop();
+
+	//stop microphone access
+	gumStream.getAudioTracks()[0].stop();
+
+	//create the wav blob and pass it on to createDownloadLink
+	rec.exportWAV(createDownloadLink);
+}
+
+function createDownloadLink(blob) {
+
+	var url = URL.createObjectURL(blob);
+	var au = document.createElement('audio');
+	var li = document.createElement('li');
+	var link = document.createElement('a');
+	var file=document.getElementById("audio");
+
+	//name of .wav file to use during upload and download (without extendion)
+	var filename = new Date().toISOString();
+
+	//add controls to the <audio> element
+	au.controls = true;
+	au.src = url;
+    //file.value="ok.mp3";
+
+	//save to disk link
+	//link.href = url;
+	//link.download = filename+".wav"; //download forces the browser to donwload the file using the  filename
+
+	//link.innerHTML = "Save to disk";
+
+	//add the new audio element to li
+	li.appendChild(au);
+
+	//add the filename to the li
+	//li.appendChild(document.createTextNode(filename+".wav "))
+
+	//add the save to disk link to li
+	//.appendChild(link);
+
+	//upload link
+	var upload = document.createElement('a');
+	upload.href="#";
+	upload.classList.add("w3-button");
+	upload.classList.add("w3-blue");
+	upload.style.marginTop="-40px";
+	upload.innerHTML = "Submit";
+    var csrftoken = getCookie('csrftoken');
+	upload.addEventListener("click", function(event){
+		  var xhr=new XMLHttpRequest();
+		  xhr.onload=function(e) {
+		      if(this.readyState === 4) {
+		          console.log("Server returned: ",e.target.responseText);
+		      }
+		  };
+		  var fd=new FormData();
+		  filename=filename+".wav";
+		  fd.append("audio_data",blob,filename);
+		  fd.append("pageno",PageNo);
+		  xhr.open("POST","{{classMaterial.get_absolute_url}}",true);
+		  xhr.setRequestHeader("X-CSRFToken", csrftoken);
+		  xhr.send(fd);
+		  alert("Question Submit Succesfully");
+	})
+	//li.appendChild(document.createTextNode (" "))//add a space in between
+	li.appendChild(upload)//add the upload link to li
+
+	//add the li element to the ol
+	recordingsList.appendChild(li);
+}
+function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+function getHightlightCoords() {
+var pageIndex = PDFViewerApplication.pdfViewer.currentPageNumber - 1;
+var page = PDFViewerApplication.pdfViewer.getPageView(pageIndex);
+var pageRect = page.canvas.getClientRects()[0];
+var selectionRects = window.getSelection().getRangeAt(0).getClientRects();
+var viewport = page.viewport;
+var selected = selectionRects.map(function (r) {
+  return viewport.convertToPdfPoint(r.left - pageRect.x, r.top - pageRect.y).concat(
+     viewport.convertToPdfPoint(r.right - pageRect.x, r.bottom - pageRect.y));
+});
+return {page: pageIndex, coords: selected};
+}
+
+
+function showHighlight(selected) {
+var pageIndex = selected.page;
+var page = PDFViewerApplication.pdfViewer.getPageView(pageIndex);
+var pageElement = page.canvas.parentElement;
+var viewport = page.viewport;
+selected.coords.forEach(function (rect) {
+  var bounds = viewport.convertToViewportRectangle(rect);
+  var el = document.createElement('div');
+  el.setAttribute('style', 'position: absolute; background-color: pink;' +
+    'left:' + Math.min(bounds[0], bounds[2]) + 'px; top:' + Math.min(bounds[1], bounds[3]) + 'px;' +
+    'width:' + Math.abs(bounds[0] - bounds[2]) + 'px; height:' + Math.abs(bounds[1] - bounds[3]) + 'px;');
+  pageElement.appendChild(el);
+});
+}
+
+    </script>
+  </body>
+</html>

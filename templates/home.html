@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block body %}
+<br>
+<br>
+{% for message in messages%}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>{{message}}</strong>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endfor %}
+{% if detail%}
+<br>
+<div class="row" style="margin-left:10px">
+    {% for class in detail%}
+     <div class="col-md-2.3 col-md-offset-2" >
+<div class="card" style="height:18rem;width:18rem;margin:1rem">
+  <div class="card-body" style=" box-shadow: 0 0 10px 0 rgba(100, 100, 100, 0.26);">
+    <h5 class="card-title">{{ class.name }}</h5>
+    <h6 class="card-title" style="margin-top:-5px">{{ class.section }}</h6>
+
+      <br>
+      <br>
+      <br>
+      <br>
+     <div class="text-center">
+
+    <a href="{{ class.get_absolute_url }}" class="btn btn-primary">Go to class</a>
+      </div>
+      </div>
+</div>
+</div>
+
+{% endfor %}
+
+
+
+</div>
+{% else %}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <strong>No class found!</strong>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endif %}
+
+{% endblock %}
