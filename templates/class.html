@@ -18,6 +18,27 @@
   border: 1px solid white;
   box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
 }
+.div6 {
+    margin: auto;
+  width: 800px;
+
+  margin-top: 10px;
+
+
+
+  display:none;
+
+}
+.div7 {
+    margin: auto;
+  width: 700px;
+
+  margin-top: 10px;
+
+
+  display:none;
+
+}
 .div3 {
     margin: auto;
   width: 1000px;
@@ -30,22 +51,30 @@
 .div4 {
     margin: auto;
   width: 1000px;
-  height: auto;
+  height: 60px;
   border-radius:10px;
 
-  border: 1px solid white;
-  box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+  border: 1px solid lightgrey;
+  //box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
 }
 .div5 {
     margin: auto;
   width: 1000px;
-  height: auto;
+  height: 60px;
   border-radius:10px;
 
   border: 1px solid white;
   box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
 }
-
+.div8:hover{
+ background: rgba(76, 175, 80, 0.3)
+}
+.div4:hover{
+ background: rgba(76, 175, 80, 0.3)
+}
+.div5:hover{
+ background: rgba(76, 175, 80, 0.3)
+}
 #title{
     text-align: left;
     margin-top:10px;
@@ -64,18 +93,18 @@ h3{
     color: white;
     margin-top: 0px;
 }
-#invite{
-    text-align: left;
-    margin-left: 1rem;
-    color: white;
-    margin-top: 0px;
-}
 .subject{
     padding: 8px;
     text-align: left;
     margin-left: 1rem;
     margin-bottom:2rem;
 
+}
+#invite{
+    text-align: left;
+    margin-left: 1rem;
+    color: white;
+    margin-top: 0px;
 }
 #room{
     margin-top: -10px;
@@ -84,7 +113,7 @@ body{
     font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 @media only screen and (max-width: 1000px) {
-.div2,.div3,.div4,.div5{
+.div2,.div3,.div4,.div5,.div6{
 
   width: auto;
 }
@@ -96,13 +125,14 @@ body{
 <br>
 <br>
 <br>
+<div id="class">
 <div class="div2">
 <h1 id="title">{{ detail.name }}</h1>
 <h3>{{ detail.section }}</h3>
     {% if request.session.teacher_id %}
 <p id="code">Class code <strong>{{detail.class_code}}</strong></p>
-    <a type="button" data-toggle="modal" data-target="#inviteModal" href="#"id="invite">Invite Student</a>
-     <div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<a type="button" data-toggle="modal" data-target="#inviteModal" href="#"id="invite">Invite Student</a>
+<div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -112,14 +142,14 @@ body{
         </button>
       </div>
       <div class="modal-body">
-        <form action="{% url 'class:inviteStudent' %}" method="POST">
+        <form action=" " method="POST">
           {% csrf_token %}
           <div class="form-group">
             <label for="class-code" class="col-form-label">Student Email:</label>
             <input type="text" name="email" class="form-control" id="class-code">
-              <input type="hidden" name="subject_name" class="form-control" value="{{detail.subject}}">
-              <input type="hidden" name="section" class="form-control" value="{{detail.section}}">
-              <input type="hidden" name="class_code" class="form-control" value="{{detail.class_code}}">
+            <input type="hidden" name="subject_name" class="form-control" value="{{detail.name}}">
+            <input type="hidden" name="section" class="form-control" value="{{detail.section}}">
+            <input type="hidden" name="class_code" class="form-control" value="{{detail.class_code}}">
           </div>
 
                 <div class="modal-footer">
@@ -142,15 +172,19 @@ body{
     </div>
 <br>
 {% if request.session.teacher_id %}
+
 <div class="div5">
-<a type="button" data-toggle="modal" data-target="#exampleModal" href="#">
+ <a data-toggle="modal" data-target="#exampleModal" style="color:black;text-decoration:none" href="">
     <div class="subject">
 
           <img src="{{teacher.image.url}}" width="40" height="40" class="rounded-circle">
           <h6 style="margin-top:-33px;margin-left:2.8rem">Post material to your class</h6>
     </div>
-    </a>
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+ </a>
+</div>
+
+     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -164,15 +198,19 @@ body{
           {% csrf_token %}
           <div class="form-group">
             <label for="title-name" class="col-form-label">Title:</label>
-            <input type="text" name="post_title" class="form-control" id="title-name"required="required">
+            <input type="text" maxlength="50" name="post_title" class="form-control" id="title-name"required="required">
           </div>
           <div class="form-group">
             <label for="desc" class="col-form-label">Description:</label>
-              <textarea type="text" cols="50" rows="10"name="post_desc" class="form-control" id="desc"></textarea>
+              <textarea type="text" maxlength="500" cols="50" rows="10"name="post_desc" class="form-control" id="desc"></textarea>
           </div>
         <div class="form-group">
               <input type="file" name="file" value="none"required="required">
         </div>
+                      <div class="form-group">
+            <label for="desc" class="col-form-label">Due Time:</label>
+              <input type="datetime-local" name="due_time" class="form-control" id="time"></textarea>
+          </div>
                 <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         <button type="submit" class="btn btn-primary">Post</button>
@@ -183,32 +221,96 @@ body{
     </div>
   </div>
 </div>
-</div>
 <br>
 {% endif %}
 
 
 {% for classMaterial in material%}
 <div class="div4">
+    <a href="{{ classMaterial.get_absolute_url_material }}" style="color:green;text-decoration:none">
     <div class="subject">
 
-          <img src="{{teacher.image.url}}" width="40" height="40" class="rounded-circle">
-          <h6 style="margin-top:-38px;margin-left:2.8rem">{{ teacher.Fname}} {{teacher.Lname}}</h6>
-        <p style="margin-top:-8px;margin-left:2.9rem;font-size:12px">{{ classMaterial.created_at }} </p>
-        <p style="margin-top:-10px;font-size:15px">
-{{classMaterial.description}}
-            <br>
-  <a href="{{ classMaterial.get_absolute_url }}" target=”_blank”>{{ classMaterial.file }}</a>
-
-        </p>
-
+          <i class="fas fa-book-open"></i>
+          <h6 style="margin-top:-30px;color:black;margin-left:2.8rem">{{ teacher.Fname}} {{teacher.Lname}} posted a new material: {{ classMaterial.title }}</h6>
+        <p style="margin-top:-8px;margin-left:2.9rem;color:black;font-size:12px">{{ classMaterial.created_at }} </p>
     </div>
-
+    </a>
 
     </div>
 <br>
 {% endfor %}
+</div>
+<div class="div6">
+{% for classMaterial in material%}
+   <a href="{{ classMaterial.get_absolute_url_material }}" target=”_blank” style="color:green;text-decoration:none">
+    <div class="div8">
 
+    <i class="fas fa-book-open"></i>
+    <p style="margin-top:-26px;margin-left:3rem;color:black;font-size:17px">{{ classMaterial.title}}
+        <span style="float:right;font-size:13px;margin-top:10px">Due {{classMaterial.dueTime}}</span></p>
+    <hr>
+
+        </div>
+    </a>
+{%endfor%}
+</div>
+<div class="div7">
+<h2 style="color:green">Teacher</h2>
+<hr>
+    <img src="{{teacher.image.url}}" width="40" height="40" class="rounded-circle">
+    <p style="margin-top:-32px;margin-left:3rem">{{ teacher.Fname}} {{teacher.Lname}}</p>
+    <br>
+    <br>
+    <h2 style="color:green">{% if request.session.student_id %}Classmates
+        {%else%}
+        Students
+        {%endif%}
+        <span style="float:right;font-size:15px;margin-top:20px">{{total}} students</span></h2>
+<hr>
+    {% for student in students%}
+     <img src="{{student.image.url}}" width="40" height="40" class="rounded-circle">
+    <p style="margin-top:-32px;margin-left:3rem">{{ student.Fname}} {{student.Lname}}</p>
+    <hr>
+    {%endfor%}
+</div>
 </body>
+<script>
+var m=document.querySelector("#material");
+m.addEventListener("click", displayMaterial);
+function displayMaterial(){
+console.log("material");
+m.classList.add("active");
+document.querySelector("#stream").classList.remove("active");
+document.querySelector("#people").classList.remove("active");
+var c=document.querySelector("#class");
+c.style.display="none";
+document.querySelector(".div7").style.display="none"
+document.querySelector(".div6").style.display="block";
+}
+var cl=document.querySelector("#stream");
+cl.addEventListener("click", displayStream);
+function displayStream(){
+console.log("stream");
+cl.classList.add("active");
+document.querySelector("#material").classList.remove("active");
+document.querySelector("#people").classList.remove("active");
+var c=document.querySelector(".div6");
+c.style.display="none";
+document.querySelector(".div7").style.display="none"
+document.querySelector("#class").style.display="block";
+}
+var pl=document.querySelector("#people");
+pl.addEventListener("click", displayPeople);
+function displayPeople(){
+console.log("stream");
+pl.classList.add("active");
+document.querySelector("#material").classList.remove("active");
+document.querySelector("#stream").classList.remove("active");
+var c=document.querySelector(".div6");
+c.style.display="none";
+document.querySelector("#class").style.display="none"
+document.querySelector(".div7").style.display="block";
+}
+</script>
 </html>
 {% endblock %}

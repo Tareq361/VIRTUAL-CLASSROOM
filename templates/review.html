@@ -1,0 +1,60 @@
+{% extends 'base2.html' %}
+
+{% block body %}
+<html>
+<head>
+<style>
+
+.review{
+margin: auto;
+ margin-top:60px;
+width: 800px;
+
+}
+.div3:hover{
+ background: rgba(76, 175, 80, 0.3)
+}
+       </style>
+</head>
+<body>
+
+<div class="review">
+    <h3>{{material.title}}</h3>
+    <hr>
+    <div>
+    <h6>Due time: {{material.dueTime}}</h6>
+    <h6>Complete: {{complete}}</h6>
+        {% for student in comlist %}
+
+  <a href="{{student.get_absolute_url_reviewmaterialstudent}}" id="stu{{student.id}}"style="color:black;text-decoration:none">
+    <div class="div3">
+    <img src="{{student.studentId.image.url}}" width="35" height="35" class="rounded-circle">
+    <p style="margin-top:-32px;margin-left:4rem">{{ student.studentId.Fname}} {{student.studentId.Lname}}</p>
+       <hr>
+    </div>
+  </a>
+    {%endfor%}
+    <h6>Incomplete: {{incomplete}}</h6>
+              {% for student in incomlist %}
+
+  <a href="{{student.get_absolute_url_reviewmaterialstudent}}" id="stu{{student.id}}"style="color:black;text-decoration:none">
+    <div class="div3">
+    <img src="{{student.studentId.image.url}}" width="35" height="35" class="rounded-circle">
+    <p style="margin-top:-32px;margin-left:4rem">{{ student.studentId.Fname}} {{student.studentId.Lname}}</p>
+       <hr>
+    </div>
+  </a>
+    {%endfor%}
+    </div>
+
+</div>
+
+</body>
+
+<script>
+    document.querySelector(".navbar-nav").style.display="none"
+    document.querySelector(".navbar-brand").innerHTML="{{material.classId.name}}";
+</script>
+</html>
+{% endblock %}
+

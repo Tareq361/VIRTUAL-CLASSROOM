@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+</head>
+<body>
+    <h1> 
+        SAND AN EMAIL
+    </h1>
+    <form action="{% url 'class:sendmail' %} " method="post">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>
+                    TO
+                </td>
+                <td>
+                    <input type="email" name="toemail">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <textarea name="content"  cols="30" rows="10"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="send">
+                </td>
+            <td>
+                <input type="reset" value="clean">
+            </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+<style>
+	body {
+		color: #fff;
+		background: #63738a;
+		font-family: 'Roboto', sans-serif;
+	}
+    .form-control{
+		height: 40px;
+		box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+		color: #969fa4;
+	}
+	.form-control:focus{
+		border-color: #5cb85c;
+	}
+    .form-control, .btn{
+        border-radius: 3px;
+    }
+	
+</style>

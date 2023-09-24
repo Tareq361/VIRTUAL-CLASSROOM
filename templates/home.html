@@ -12,26 +12,88 @@
 {% endfor %}
 {% if detail%}
 <br>
+  {% if request.session.student_id%}
+    <a style="margin-left:25px;color:green" data-toggle="modal" data-target="#exampleModal2"href="" class="btn"><i class="fas fa-list-ul"></i> Task</a>
+  <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Task</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <select class="form-select" aria-label="Default select example" id="Selector">
+  <option selected>All Classes</option>
+      {% for class in detail%}
+  <option value="{{class.name}}">{{class.name}}</option>
+              {%endfor%}
+</select>
+
+      <h6>Complete:</h6>
+          <br>
+              {% for list in complete%}
+        <div class="div4 c{{list.materialId.classId.name}}">
+    <a href="{{ list.materialId.get_absolute_url_material }}" style="color:green;text-decoration:none">
+    <div class="subject">
+
+          <i class="fas fa-book-open"></i>
+          <h6 style="margin-top:-30px;color:black;margin-left:2.2rem">{{ list.materialId.title }}
+              <span style="float:right;font-size:13px;margin-top:5px">Completed on {{list.comTime}}</span></p></h6>
+        <p style="margin-top:-8px;margin-left:2.3rem;color:black;font-size:12px">{{ list.materialId.classId.name }} </p>
+    </div>
+    </a>
+ <hr>
+    </div>
+
+        {%endfor%}
+      <h6>Incomplete:</h6>
+          <br>
+        {% for list in incomplete%}
+        <div class="div4 c{{list.materialId.classId.name}}">
+    <a href="{{ list.materialId.get_absolute_url_material }}" style="color:green;text-decoration:none">
+    <div class="subject">
+
+          <i class="fas fa-book-open"></i>
+          <h6 style="margin-top:-30px;color:black;margin-left:2.2rem">{{ list.materialId.title }}
+          <span style="float:right;font-size:13px;margin-top:5px">Due {{list.materialId.dueTime}}</span></p></h6>
+          </h6>
+              <p style="margin-top:-8px;margin-left:2.3rem;color:black;font-size:12px">{{ list.materialId.classId.name }} </p>
+
+    </div>
+    </a>
+ <hr>
+    </div>
+
+        {%endfor%}
+      </div>
+
+    </div>
+  </div>
+</div>
+    {% endif %}
 <div class="row" style="margin-left:10px">
     {% for class in detail%}
-     <div class="col-md-2.3 col-md-offset-2" >
+   <a href="{{ class.get_absolute_url }}" style="color:black">
+     <div class="col-md-2.3 col-md-offset-2 class" >
 <div class="card" style="height:18rem;width:18rem;margin:1rem">
-  <div class="card-body" style=" box-shadow: 0 0 10px 0 rgba(100, 100, 100, 0.26);">
+  <div class="card-body" style="">
     <h5 class="card-title">{{ class.name }}</h5>
     <h6 class="card-title" style="margin-top:-5px">{{ class.section }}</h6>
-
+    <h6 class="card-title" style="margin-top:-5px">{{ class.teacherId.Fname}} {{ class.teacherId.Lname}}</h6>
       <br>
       <br>
       <br>
       <br>
      <div class="text-center">
 
-    <a href="{{ class.get_absolute_url }}" class="btn btn-primary">Go to class</a>
-      </div>
-      </div>
-</div>
-</div>
 
+      </div>
+      </div>
+</div>
+</div>
+   </a>
 {% endfor %}
 
 
@@ -45,5 +107,40 @@
   </button>
 </div>
 {% endif %}
+<script>
 
+var activities = document.getElementById("Selector");
+
+activities.addEventListener("change", function() {
+
+   if(activities.value=='All Classes'){
+    {% for class in detail%}
+    var classe = document.getElementsByClassName("c{{class.name}}");
+    for (var i = 0; i < classe.length; i ++) {
+    classe[i].style.display = 'block';
+}
+
+   {%endfor%}
+   }
+   else{
+   {% for class in detail%}
+   if('{{class.name}}'!=activities.value){
+   var classe = document.getElementsByClassName("c{{class.name}}");
+      for (var i = 0; i < classe.length; i ++) {
+    classe[i].style.display = 'none';
+}
+   }
+   else if('{{class.name}}'==activities.value){
+    var classe = document.getElementsByClassName("c{{class.name}}");
+      for (var i = 0; i < classe.length; i ++) {
+    classe[i].style.display = 'block';
+}
+   }
+
+   {%endfor%}
+   }
+});
+
+
+</script>
 {% endblock %}

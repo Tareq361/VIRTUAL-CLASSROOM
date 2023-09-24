@@ -1,0 +1,55 @@
+{% extends 'base2.html' %}
+
+{% block body %}
+<html>
+<head>
+<style>
+.div2 {
+    margin: auto;
+  width: 800px;
+
+  margin-top: 60px;
+
+}
+.work{
+
+  width: 310px;
+  height: auto;
+  border-radius:10px;
+
+  border: 1px solid white;
+  box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+}
+    </style>
+</head>
+<body>
+<div class="div2">
+<h3 id="title" style="color:green">{{ material.title }}</h3>
+    <p style="font-size:13px">{{material.classId.teacherId.Fname}} {{material.classId.teacherId.Lname}}--{{material.created_at}}
+        <span style="float:right;font-size:15px;margin-top:10px">Due {{material.dueTime}}</span></p>
+    <hr style="background-color:green">
+    <p>{{material.description}}</p>
+     <a href="{{ material.get_absolute_url }}" target=”_blank” style="color:green;text-decoration:none">{{material.file}}
+     </a>
+    <hr style="background-color:green">
+     {% if request.session.teacher_id%}
+    <a type="button" href="{{material.get_absolute_url_reviewmaterial}}" class="btn btn-success">Review</a>
+    {%else%}
+<div class="work">
+    <h5>Your Work</h5>
+    {%if work.comTime%}
+    <p>Completed on: <strong>{{work.comTime}}</strong></p>
+    <p>Reading time: <strong>{{readingtime}} minutes</strong></p>
+    {%else%}
+    <P>Incomplete</P>
+    {%endif%}
+</div>
+    {% endif %}
+</div>
+</body>
+<script>
+    document.querySelector(".item").style.display="none"
+    document.querySelector(".navbar-brand").innerHTML="{{material.classId.name}}";
+</script>
+</html>
+{% endblock %}
